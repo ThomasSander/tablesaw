@@ -63,7 +63,7 @@
 
 	module( 'Global' );
 	test( 'Initialization', function() {
-		ok( $( 'html' ).hasClass( 'tablesaw-enhanced' ), 'Has initialization class.' );
+		ok( $( 'html' ).is( '.tablesaw-enhanced' ), 'Has initialization class.' );
 	});
 
 	module( 'tablesaw is opt-in only, no default', {
@@ -79,7 +79,7 @@
 	});
 
 	test( 'Initialization', function() {
-		ok( $table.hasClass( 'tablesaw-stack' ), 'Has initialization class.' );
+		ok( $table.is( '.tablesaw-stack' ), 'Has initialization class.' );
 	});
 
 	module( 'tablesaw Column Toggle', {
@@ -87,8 +87,7 @@
 	});
 
 	test( 'Initialization', function() {
-		ok( $table.hasClass( 'tablesaw-columntoggle' ), 'Has initialization class.' );
-		ok( $table.find( 'tbody td' ).eq( 0 ).is( ':visible' ), 'First cell is visible' );
+		ok( $table.is( '.tablesaw-columntoggle' ), 'Has initialization class.' );
 	});
 
 	test( 'Show Dialog', function() {
@@ -120,7 +119,7 @@
 
 	test( 'Initialization', function() {
 		var $buttons = $table.prev().find( '.tablesaw-nav-btn' );
-		ok( $table.hasClass( 'tablesaw-swipe' ), 'Has initialization class.' );
+		ok( $table.is( '.tablesaw-swipe' ), 'Has initialization class.' );
 		equal( $buttons.length, 2, 'Has buttons.' );
 	});
 
@@ -143,7 +142,7 @@
 	});
 
 	test( 'Sortable still initializes without a data-mode', function() {
-		ok( $table.hasClass( 'tablesaw-sortable' ), 'Has initialization class.' );
+		ok( $table.is( '.tablesaw-sortable' ), 'Has initialization class.' );
 		ok( $table.find( '.sortable-head' ).length > 0, 'Header has sort class.' );
 	});
 
@@ -152,7 +151,7 @@
 	});
 
 	test( 'Initialization', function() {
-		ok( $table.hasClass( 'tablesaw-sortable' ), 'Has initialization class.' );
+		ok( $table.is( '.tablesaw-sortable' ), 'Has initialization class.' );
 		ok( $table.find( '.sortable-head' ).length > 0, 'Header has sort class.' );
 	});
 
@@ -243,16 +242,16 @@
 
 	test( 'Can switch to Swipe mode', function() {
 		var $switcher = $table.prev().find( '.tablesaw-modeswitch' ).find( 'select' );
-		ok( !$table.hasClass( 'tablesaw-swipe' ), 'Doesn’t have class.' );
+		ok( !$table.is( '.tablesaw-swipe' ), 'Doesn’t have class.' );
 		$switcher.val( 'swipe' ).trigger( 'change' );
-		ok( $table.hasClass( 'tablesaw-swipe' ), 'Has class.' );
+		ok( $table.is( '.tablesaw-swipe' ), 'Has class.' );
 	});
 
 	test( 'Can switch to Column Toggle mode', function() {
 		var $switcher = $table.prev().find( '.tablesaw-modeswitch' ).find( 'select' );
-		ok( !$table.hasClass( 'tablesaw-columntoggle' ), 'Doesn’t have class.' );
+		ok( !$table.is( '.tablesaw-columntoggle' ), 'Doesn’t have class.' );
 		$switcher.val( 'columntoggle' ).trigger( 'change' );
-		ok( $table.hasClass( 'tablesaw-columntoggle' ), 'Has class.' );
+		ok( $table.is( '.tablesaw-columntoggle' ), 'Has class.' );
 	});
 
 }(jQuery));
