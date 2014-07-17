@@ -1,4 +1,4 @@
-/*! Tablesaw - v0.1.5 - 2014-07-03
+/*! Tablesaw - v0.1.5 - 2014-07-17
 * https://github.com/filamentgroup/tablesaw
 * Copyright (c) 2014 Filament Group; Licensed MIT */
 ;(function( $ ) {
@@ -66,10 +66,10 @@
 
 	Table.prototype._initCells = function() {
 		var colstart,
-			thrs = this.table.querySelectorAll( "thead tr" ),
+			$thrs = $( this.table ).find( "thead tr" ),
 			self = this;
 
-		$( thrs ).each( function(){
+		$thrs.each( function(){
 			var coltally = 0;
 
 			$( this ).children().each( function(){
@@ -86,7 +86,7 @@
 				}
 
 				// Store "cells" data on header as a reference to all cells in the same column as this TH
-				this.cells = self.$table.find("tr").not( $( thrs ).eq( 0 ) ).not( this ).children( sel );
+				this.cells = self.$table.find("tr").not( $thrs.eq( 0 ) ).not( this ).children( sel );
 				coltally++;
 			});
 		});
@@ -103,7 +103,7 @@
 	Table.prototype.createToolbar = function() {
 		// Insert the toolbar
 		// TODO move this into a separate component
-		var $toolbar = this.$table.prev( '.' + classes.toolbar );
+		var $toolbar = this.$table.prev().filter( '.' + classes.toolbar );
 		if( !$toolbar.length ) {
 			$toolbar = $( '<div>' )
 				.addClass( classes.toolbar )
@@ -117,8 +117,8 @@
 	};
 
 	Table.prototype.destroy = function() {
-		// Don’t remove the toolbar. Some of the table features are not yet destroy-friendly.
-		this.$table.prev( '.' + classes.toolbar ).each(function() {
+		// Don't remove the toolbar. Some of the table features are not yet destroy-friendly.
+		this.$table.prev().filter( '.' + classes.toolbar ).each(function() {
 			this.className = this.className.replace( /\bmode\-\w*\b/gi, '' );
 		});
 
@@ -219,18 +219,17 @@
 	};
 
 	// on tablecreate, init
-	$( document ).on( "tablesawcreate", "table", function( e, mode, colstart ){
+	$( document ).on( "tablesawcreate", function( e, mode, colstart ){
 		if( mode === 'stack' ){
-			var table = new Stack( this );
+			var table = new Stack( e.target );
 			table.init( colstart );
 		}
 
 	} );
 
-	$( document ).on( "tablesawdestroy", "table", function( e, mode ){
-
+	$( document ).on( "tablesawdestroy", function( e, mode ){
 		if( mode === 'stack' ){
-			$( this ).data( data.obj ).destroy();
+			$( e.target ).data( data.obj ).destroy();
 		}
 
 	} );

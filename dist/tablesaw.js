@@ -1,4 +1,4 @@
-/*! Tablesaw - v0.1.5 - 2014-07-03
+/*! Tablesaw - v0.1.5 - 2014-07-17
 * https://github.com/filamentgroup/tablesaw
 * Copyright (c) 2014 Filament Group; Licensed MIT */
 ;(function( $ ) {
@@ -66,10 +66,10 @@
 
 	Table.prototype._initCells = function() {
 		var colstart,
-			thrs = this.table.querySelectorAll( "thead tr" ),
+			$thrs = $( this.table ).find( "thead tr" ),
 			self = this;
 
-		$( thrs ).each( function(){
+		$thrs.each( function(){
 			var coltally = 0;
 
 			$( this ).children().each( function(){
@@ -86,7 +86,7 @@
 				}
 
 				// Store "cells" data on header as a reference to all cells in the same column as this TH
-				this.cells = self.$table.find("tr").not( $( thrs ).eq( 0 ) ).not( this ).children( sel );
+				this.cells = self.$table.find("tr").not( $thrs.eq( 0 ) ).not( this ).children( sel );
 				coltally++;
 			});
 		});
@@ -103,7 +103,7 @@
 	Table.prototype.createToolbar = function() {
 		// Insert the toolbar
 		// TODO move this into a separate component
-		var $toolbar = this.$table.prev( '.' + classes.toolbar );
+		var $toolbar = this.$table.prev().filter( '.' + classes.toolbar );
 		if( !$toolbar.length ) {
 			$toolbar = $( '<div>' )
 				.addClass( classes.toolbar )
@@ -117,8 +117,8 @@
 	};
 
 	Table.prototype.destroy = function() {
-		// Don’t remove the toolbar. Some of the table features are not yet destroy-friendly.
-		this.$table.prev( '.' + classes.toolbar ).each(function() {
+		// Don't remove the toolbar. Some of the table features are not yet destroy-friendly.
+		this.$table.prev().filter( '.' + classes.toolbar ).each(function() {
 			this.className = this.className.replace( /\bmode\-\w*\b/gi, '' );
 		});
 
@@ -219,23 +219,23 @@
 	};
 
 	// on tablecreate, init
-	$( document ).on( "tablesawcreate", "table", function( e, mode, colstart ){
+	$( document ).on( "tablesawcreate", function( e, mode, colstart ){
 		if( mode === 'stack' ){
-			var table = new Stack( this );
+			var table = new Stack( e.target );
 			table.init( colstart );
 		}
 
 	} );
 
-	$( document ).on( "tablesawdestroy", "table", function( e, mode ){
-
+	$( document ).on( "tablesawdestroy", function( e, mode ){
 		if( mode === 'stack' ){
-			$( this ).data( data.obj ).destroy();
+			$( e.target ).data( data.obj ).destroy();
 		}
 
 	} );
 
 }( this, jQuery ));
+
 ;(function( $ ) {
 	var pluginName = "tablesawbtn",
 		initSelector = ".btn",
@@ -374,7 +374,7 @@
 
 		// Expose headers and allHeaders properties on the widget
 		// headers references the THs within the first TR in the table
-		this.headers = this.$table.find( 'tr:first > th' );
+		this.headers = $( this.$table.find( 'tr' )[0].childNodes ).filter( 'th' );
 
 		this.$table.data( 'tablesaw-coltoggle', this );
 	};
@@ -437,7 +437,7 @@
 		});
 
 		$menuButton.appendTo( $btnContain );
-		$btnContain.appendTo( this.$table.prev( '.' + this.classes.toolbar ) );
+		$btnContain.appendTo( this.$table.prev().filter( '.' + this.classes.toolbar ) );
 		$popup
 			.appendTo( $btnContain )
 			.dialog( true );
@@ -491,22 +491,23 @@
 	};
 
 	// on tablecreate, init
-	$( document ).on( "tablesawcreate", "table", function( e, mode ){
+	$( document ).on( "tablesawcreate", function( e, mode ){
 
 		if( mode === 'columntoggle' ){
-			var table = new ColumnToggle( this );
+			var table = new ColumnToggle( e.target );
 			table.init();
 		}
 
 	} );
 
-	$( document ).on( "tablesawdestroy", "table", function( e, mode ){
+	$( document ).on( "tablesawdestroy", function( e, mode ){
 		if( mode === 'columntoggle' ){
-			$( this ).data( 'tablesaw-coltoggle' ).destroy();
+			$( e.target ).data( 'tablesaw-coltoggle' ).destroy();
 		}
 	} );
 
 }( this, jQuery ));
+
 ;(function( win, $, undefined ){
 
 
@@ -530,7 +531,7 @@
 		});
 		$table.css( 'width', '' );
 
-		$btns.appendTo( $table.prev( '.tablesaw-bar' ) );
+		$btns.appendTo( $table.prev().filter( '.tablesaw-bar' ) );
 
 		$table.addClass( "tablesaw-swipe" );
 
@@ -722,7 +723,7 @@
 				var $t = $( this );
 
 				$t.removeClass( 'tablesaw-swipe' );
-				$t.prev( '.tablesaw-bar' ).find( '.tablesaw-advance' ).remove();
+				$t.prev().filter( '.tablesaw-bar' ).find( '.tablesaw-advance' ).remove();
 				$( win ).off( "resize", fakeBreakpoints );
 
 				$t.unbind( ".swipetoggle" );
@@ -735,9 +736,9 @@
 
 
 	// on tablecreate, init
-	$( document ).on( "tablesawcreate", "table", function( e, mode ){
+	$( document ).on( "tablesawcreate", function( e, mode ){
 
-		var $table = $( this );
+		var $table = $( e.target );
 		if( mode === 'swipe' ){
 			createSwipeTable( $table );
 		}
@@ -876,7 +877,7 @@
 							return html.join('');
 						});
 
-						var $toolbar = el.prev( '.tablesaw-bar' ),
+						var $toolbar = el.prev().filter( '.tablesaw-bar' ),
 							$firstChild = $toolbar.children().eq( 0 );
 
 						if( $firstChild.length ) {
@@ -1009,9 +1010,9 @@
 	// add methods
 	$.extend( $.fn[ pluginName ].prototype, methods );
 
-	$( document ).on( "tablesawcreate", "table", function() {
-		if( $( this ).is( initSelector ) ) {
-			$( this )[ pluginName ]();
+	$( document ).on( "tablesawcreate", function(e) {
+		if( $( e.target ).is( initSelector ) ) {
+			$( e.target )[ pluginName ]();
 		}
 	});
 
@@ -1037,7 +1038,7 @@
 			$dotNav.append( '<li><i></i></li>' );
 		});
 
-		$btns.appendTo( $table.prev( '.tablesaw-bar' ) );
+		$btns.appendTo( $table.prev().filter( '.tablesaw-bar' ) );
 
 		function showMinimap( $table ) {
 			var mq = $table.attr( MM.attr.init );
@@ -1072,7 +1073,7 @@
 			.bind( "tablesawdestroy.minimap", function(){
 				var $t = $( this );
 
-				$t.prev( '.tablesaw-bar' ).find( '.tablesaw-advance' ).remove();
+				$t.prev().filter( '.tablesaw-bar' ).find( '.tablesaw-advance' ).remove();
 				$( win ).off( "resize", showHideNav );
 
 				$t.unbind( ".minimap" );
@@ -1082,9 +1083,9 @@
 
 
 	// on tablecreate, init
-	$( document ).on( "tablesawcreate", "table", function( e, mode ){
+	$( document ).on( "tablesawcreate", function( e, mode ){
 
-		var $table = $( this );
+		var $table = $( e.target );
 		if( ( mode === 'swipe' || mode === 'columntoggle' ) && $table.is( '[ ' + MM.attr.init + ']' ) ){
 			createMiniMap( $table );
 		}
@@ -1114,7 +1115,7 @@
 		init: function( table ) {
 			var $table = $( table ),
 				ignoreMode = $table.attr( S.attributes.excludeMode ),
-				$toolbar = $table.prev( '.tablesaw-bar' ),
+				$toolbar = $table.prev().filter( '.tablesaw-bar' ),
 				modeVal = '',
 				$switcher = $( '<div>' ).addClass( S.classes.main + ' ' + S.classes.toolbar ).html(function() {
 					var html = [ '<label>' + S.i18n.columns + ':' ],
@@ -1166,9 +1167,9 @@
 		}
 	};
 
-	$( win.document ).on( "tablesawcreate", "table", function() {
-		if( $( this ).is( S.selectors.init ) ) {
-			S.init( this );
+	$( win.document ).on( "tablesawcreate", function(e) {
+		if( $( e.target ).is( S.selectors.init ) ) {
+			S.init( e.target );
 		}
 	});
 
