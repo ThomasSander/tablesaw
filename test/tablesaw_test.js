@@ -90,12 +90,17 @@
 		ok( $table.is( '.tablesaw-columntoggle' ), 'Has initialization class.' );
 	});
 
+	test( 'Initialization - visibility', function() {
+		ok( $table.find( 'tbody td' ).eq( 0 ).css( 'display' ) !== "none", 'First cell is visible' );
+  });
+
 	test( 'Show Dialog', function() {
-		ok( !$fixture.find( '.tablesaw-columntoggle-popup' ).is( ':visible' ), 'Dialog hidden' );
+		ok( $fixture.find( '.tablesaw-columntoggle-popup' ).css( 'display' ) === "none", 'Dialog hidden' );
+
 
 		$table.prev().find( '.tablesaw-columntoggle-btn' ).click();
 
-		ok( $fixture.find( '.tablesaw-columntoggle-popup' ).is( ':visible' ), 'Dialog visible after button click' );
+		ok( $fixture.find( '.tablesaw-columntoggle-popup' ).css( 'display' ) !== "none", 'Dialog visible after button click' );
 
 		var $curtain = $( '.dialog-background-open' );
 		ok( $curtain.length, 'Curtain visible.' );
@@ -109,7 +114,7 @@
 		$table.prev().find( '.tablesaw-columntoggle-btn' ).click()
 			.next().find( ':checkbox' ).trigger( 'click' );
 
-		ok( !$table.find( 'tbody td' ).eq( 0 ).is( ':visible' ), 'First cell is hidden after checkbox unchecked' );
+		ok( $table.find( 'tbody td' ).eq( 0 ).css( 'display' ) === "none", 'First cell is hidden after checkbox unchecked' );
 	});
 
 
