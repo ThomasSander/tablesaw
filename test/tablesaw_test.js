@@ -98,7 +98,8 @@
 		ok( $fixture.find( '.tablesaw-columntoggle-popup' ).css( 'display' ) === "none", 'Dialog hidden' );
 
 
-		$table.prev().find( '.tablesaw-columntoggle-btn' ).click();
+		var btn = $table.prev().find( '.tablesaw-columntoggle-btn' )[0];
+		$( btn ).trigger( "click" );
 
 		ok( $fixture.find( '.tablesaw-columntoggle-popup' ).css( 'display' ) !== "none", 'Dialog visible after button click' );
 
@@ -106,13 +107,14 @@
 		ok( $curtain.length, 'Curtain visible.' );
 
 		// close dialog
-		$curtain.click();
+		$curtain.trigger( "click" );
 		ok( $curtain.is( '.dialog-background-open' ), 'Curtain not visible after click.' );
 	});
 
 	test( 'Toggle Column', function() {
-		$table.prev().find( '.tablesaw-columntoggle-btn' ).click()
-			.next().find( ':checkbox' ).trigger( 'click' );
+		var toggleBtn = $table.prev().find( '.tablesaw-columntoggle-btn' );
+		toggleBtn.trigger( 'click' );
+		toggleBtn.next().find( 'input[type=checkbox]' ).trigger( 'click' );
 
 		ok( $table.find( 'tbody td' ).eq( 0 ).css( 'display' ) === "none", 'First cell is hidden after checkbox unchecked' );
 	});
