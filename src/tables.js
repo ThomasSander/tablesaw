@@ -46,10 +46,10 @@
 
 	Table.prototype._initCells = function() {
 		var colstart,
-			thrs = this.table.querySelectorAll( "thead tr" ),
+			$thrs = $( this.table ).find( "thead tr" ),
 			self = this;
 
-		$( thrs ).each( function(){
+		$thrs.each( function(){
 			var coltally = 0;
 
 			$( this ).children().each( function(){
@@ -66,7 +66,7 @@
 				}
 
 				// Store "cells" data on header as a reference to all cells in the same column as this TH
-				this.cells = self.$table.find("tr").not( $( thrs ).eq( 0 ) ).not( this ).children( sel );
+				this.cells = self.$table.find("tr").not( $thrs.eq( 0 ) ).not( this ).children( sel );
 				coltally++;
 			});
 		});
